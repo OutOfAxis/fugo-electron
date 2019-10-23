@@ -12,12 +12,29 @@ function createWindow () {
   })
 
   mainWindow.removeMenu()
-  mainWindow.loadURL('https://pixelart-web.netlify.com')
+
+  const webPlayerURL = 'https://pixelart-web-ge.netlify.com' // 'https://pixelart-web.netlify.com'
+  mainWindow.loadURL(webPlayerURL)
 
   mainWindow.webContents.on('dom-ready', () => {
     // we can't just set BrowserWindow.setFullscreen(true) because HTML5 fullscreen API will stop working
     mainWindow.webContents.executeJavaScript('document.documentElement.requestFullscreen()', true)
   });
+
+  mainWindow.webContents.on('crashed', (e) => {
+    console.error(e)
+    reloadWebPlayer()
+  });
+
+  mainWindow.webContents.on('unresponsive', (e) => {
+    console.error(e)
+    reloadWebPlayer()
+  });
+
+  function reloadWebPlayer() {
+    app.relaunch()
+    app.exit(0)
+  }
 
   // mainWindow.webContents.openDevTools()
 
