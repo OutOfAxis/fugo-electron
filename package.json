@@ -15,7 +15,7 @@
   ],
   "author": "Pixelart team",
   "devDependencies": {
-    "electron": "^6.0.11",
+    "electron": "^7.1.0",
     "electron-builder": "^21.2.0"
   },
   "build": {

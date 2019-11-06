@@ -8,12 +8,11 @@ function createWindow () {
   mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
-    webPreferences: {}
+    webPreferences: {},
+    autoHideMenuBar: true,
   })
 
-  mainWindow.removeMenu()
-
-  const webPlayerURL = 'https://pixelart-web-ge.netlify.com' // 'https://pixelart-web.netlify.com'
+  const webPlayerURL = 'https://pixelart-web.netlify.com' // 'https://pixelart-web.netlify.com'
   mainWindow.loadURL(webPlayerURL)
 
   mainWindow.webContents.on('dom-ready', () => {
