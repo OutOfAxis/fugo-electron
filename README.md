@@ -10,6 +10,7 @@ npm start
 Also uncomment `mainWindow.webContents.openDevTools()` to see the dev tools.
 
 ## Distrubition
+Creating an executable installer:
 ```
 npm run dist
 ```
