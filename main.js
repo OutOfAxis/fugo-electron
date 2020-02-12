@@ -33,7 +33,7 @@ function createWindow() {
   })
 
   // set safe guards after a while to avoid infinite reload
-  setTimeout(() => setSafeGuards(mainWindow, app), 10000);
+  setTimeout(() => setSafeGuards(mainWindow, app), 1000 * 60 * 10);
 
   // mainWindow.webContents.openDevTools()
 
