@@ -32,20 +32,8 @@ function createWindow() {
     )
   })
 
-  mainWindow.webContents.on('crashed', e => {
-    console.error(e)
-    reloadWebPlayer()
-  })
-
-  mainWindow.webContents.on('unresponsive', e => {
-    console.error(e)
-    reloadWebPlayer()
-  })
-
-  function reloadWebPlayer() {
-    app.relaunch()
-    app.exit(0)
-  }
+  // set safe guards after a while to avoid infinite reload
+  setTimeout(() => setSafeGuards(mainWindow, app), 10000);
 
   // mainWindow.webContents.openDevTools()
 
@@ -91,4 +79,24 @@ function show() {
     mainWindow.focus()
     mainWindow.show()
   }
+}
+
+// setup guards that will restart the app in case of freezed web player
+function setSafeGuards(mainWindow, app) {
+  mainWindow.webContents.on('crashed', e => {
+    console.error(e)
+    reloadWebPlayer(app)
+  })
+
+  mainWindow.webContents.on('unresponsive', e => {
+    console.error(e)
+    reloadWebPlayer(app)
+  })
+
+  console.log('Safe guards are set')
+}
+
+function reloadWebPlayer(app) {
+  app.relaunch()
+  app.exit(0)
 }
