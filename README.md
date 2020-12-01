@@ -1,6 +1,6 @@
-# Pixelart Windows Player
+# Fugo Windows Player
 
-This is Electron wrapper for [Pixelart Web Player](https://pixelart-web.netlify.com) ([source](git@github.com:OutOfAxis/pixelart-cms-web-player.git))
+This is Electron wrapper for [Fugo Web Player](https://player.fugo.ai) ([source](git@github.com:OutOfAxis/pixelart-cms-web-player.git))
 
 ## Development
 ```

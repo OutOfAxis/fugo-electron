@@ -21,7 +21,7 @@ function createWindow() {
     show()
   })
 
-  const webPlayerURL = 'https://pixelart-web.netlify.com'
+  const webPlayerURL = 'https://player.fugo.ai'
   mainWindow.loadURL(webPlayerURL)
 
   mainWindow.webContents.on('dom-ready', () => {

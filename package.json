@@ -1,7 +1,7 @@
 {
-  "name": "pixelart-cms-windows-player",
+  "name": "fugo-cms-windows-player",
   "version": "1.0.0",
-  "description": "Pixelart CMS Windows Player",
+  "description": "Fugo CMS Windows Player",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
@@ -13,13 +13,13 @@
     "digital signage",
     "dooh"
   ],
-  "author": "Pixelart team",
+  "author": "Fugo team",
   "devDependencies": {
-    "electron": "^7.1.0",
-    "electron-builder": "^21.2.0"
+    "electron": "^11.0.3",
+    "electron-builder": "^22.9.1"
   },
   "build": {
-    "appId": "ai.pixelart.windowplayer",
+    "appId": "ai.fugo.windowplayer",
     "mac": {
       "category": "public.app-category.business"
     }
