@@ -6,7 +6,7 @@
   "scripts": {
     "start": "electron .",
     "pack": "electron-builder --dir",
-    "dist": "electron-builder --x64 --ia32"
+    "dist": "electron-builder -w"
   },
   "repository": "https://github.com/electron/electron-quick-start",
   "keywords": [
@@ -15,13 +15,24 @@
   ],
   "author": "Fugo team",
   "devDependencies": {
-    "electron": "^11.0.3",
-    "electron-builder": "^22.9.1"
+    "electron": "^18.1.0",
+    "electron-builder": "^23.0.3"
   },
   "build": {
     "appId": "ai.fugo.windowplayer",
     "mac": {
       "category": "public.app-category.business"
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64",
+            "ia32"
+          ]
+        }
+      ]
     }
   },
   "prettier": {

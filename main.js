@@ -15,7 +15,7 @@ function createWindow() {
     // show: false, // turn on for .ge
   })
 
-  const iconPath = path.join(__dirname, 'icon.ico')
+  const iconPath = path.join(__dirname, 'icon.png')
   tr = new Tray(iconPath)
   tr.addListener('click', () => {
     show()
