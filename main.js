@@ -5,6 +5,9 @@ const log = require("electron-log")
 
 log.transports.file.level = "debug"
 autoUpdater.logger = log
+autoUpdater.on('update-downloaded', (info) => {
+  autoUpdater.quitAndInstall();
+})
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
