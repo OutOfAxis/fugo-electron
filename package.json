@@ -1,6 +1,6 @@
 {
   "name": "fugo-cms-windows-player",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "Fugo CMS Windows Player",
   "main": "main.js",
   "scripts": {
@@ -41,6 +41,7 @@
     "semi": false
   },
   "dependencies": {
-    "update-electron-app": "^2.0.1"
+    "electron-log": "^4.4.6",
+    "electron-updater": "^5.0.1"
   }
 }

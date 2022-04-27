@@ -1,7 +1,10 @@
 const { app, BrowserWindow, Tray } = require('electron')
 const path = require('path')
+const { autoUpdater } = require("electron-updater")
+const log = require("electron-log")
 
-require('update-electron-app')()
+log.transports.file.level = "debug"
+autoUpdater.logger = log
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -47,6 +50,8 @@ function createWindow() {
     e.preventDefault()
     mainWindow.hide();
   });
+
+  autoUpdater.checkForUpdatesAndNotify()
 }
 
 // autorun
