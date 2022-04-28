@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Tray } = require('electron')
+const { app, BrowserWindow, Tray, Menu } = require('electron')
 const path = require('path')
 const { autoUpdater } = require("electron-updater")
 const log = require("electron-log")
@@ -28,6 +28,18 @@ function createWindow() {
   tr.addListener('click', () => {
     show()
   })
+  tr.setContextMenu(
+    Menu.buildFromTemplate([
+      {
+        label: 'About',
+        role: 'about'
+      },
+      {
+        label: 'Quit',
+        click() { app.exit(0); }
+      },
+    ])
+  )
 
   const webPlayerURL = 'https://player.fugo.ai'
   mainWindow.loadURL(webPlayerURL)
