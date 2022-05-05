@@ -16,7 +16,8 @@
   "author": "Fugo team",
   "devDependencies": {
     "electron": "^18.1.0",
-    "electron-builder": "^23.0.3"
+    "electron-builder": "^23.0.3",
+    "node-fetch": "^2.6.7"
   },
   "build": {
     "appId": "ai.fugo.windowplayer",

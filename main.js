@@ -1,7 +1,8 @@
-const { app, BrowserWindow, Tray, Menu } = require('electron')
+const { app, BrowserWindow, Tray, Menu, ipcMain } = require('electron')
 const path = require('path')
 const { autoUpdater } = require("electron-updater")
 const log = require("electron-log")
+const fetch = require('node-fetch')
 
 log.transports.file.level = "debug"
 autoUpdater.logger = log
@@ -18,7 +19,9 @@ function createWindow() {
   mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
-    webPreferences: {},
+    webPreferences: {
+      preload: path.join(__dirname, 'preload.js')
+    },
     autoHideMenuBar: true,
     // show: false, // turn on for .ge
   })
@@ -65,6 +68,8 @@ function createWindow() {
     e.preventDefault()
     mainWindow.hide();
   });
+
+  ipcMain.on('doScreenshot', handleDoScreenshot);
 
   autoUpdater.checkForUpdatesAndNotify()
 }
@@ -121,4 +126,13 @@ function setSafeGuards(mainWindow, app) {
 function reloadWebPlayer(app) {
   app.relaunch()
   app.exit(0)
+}
+
+function handleDoScreenshot(event, url) {
+  mainWindow.webContents.capturePage().then(image => {
+    fetch(url, {
+      method: 'PUT',
+      body: image.toJPEG(75)
+    })
+  })
 }
