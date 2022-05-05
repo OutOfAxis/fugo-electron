@@ -1,6 +1,6 @@
 {
   "name": "fugo-cms-windows-player",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "description": "Fugo CMS Windows Player",
   "main": "main.js",
   "scripts": {
@@ -16,8 +16,7 @@
   "author": "Fugo team",
   "devDependencies": {
     "electron": "^18.1.0",
-    "electron-builder": "^23.0.3",
-    "node-fetch": "^2.6.7"
+    "electron-builder": "^23.0.3"
   },
   "build": {
     "appId": "ai.fugo.windowplayer",
@@ -43,6 +42,7 @@
   },
   "dependencies": {
     "electron-log": "^4.4.6",
-    "electron-updater": "^5.0.1"
+    "electron-updater": "^5.0.1",
+    "node-fetch": "^2.6.7"
   }
 }
