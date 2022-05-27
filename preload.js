@@ -1,9 +1,13 @@
 // All of the Node.js APIs are available in the preload process.
 // It has the same sandbox as a Chrome extension.
-const { contextBridge, ipcRenderer } = require('electron')
+const { app, contextBridge, ipcRenderer } = require('electron')
 
 contextBridge.exposeInMainWorld('FugoElectronBridge', {
   doScreenshot(url) {
     ipcRenderer.send('doScreenshot', url);
+  },
+
+  getVersion() {
+    return app.getVersion();
   }
 })
