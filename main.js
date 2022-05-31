@@ -70,6 +70,7 @@ function createWindow() {
   });
 
   ipcMain.on('doScreenshot', handleDoScreenshot);
+  ipcMain.handle('getVersion', handleGetVersion);
 
   autoUpdater.checkForUpdatesAndNotify()
 }
@@ -135,4 +136,8 @@ function handleDoScreenshot(event, url) {
       body: image.toJPEG(75)
     })
   })
+}
+
+function handleGetVersion() {
+  return app.getVersion();
 }
