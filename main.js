@@ -1,13 +1,13 @@
 const { app, BrowserWindow, Tray, Menu, ipcMain } = require('electron')
 const path = require('path')
-const { autoUpdater } = require("electron-updater")
-const log = require("electron-log")
+const { autoUpdater } = require('electron-updater')
+const log = require('electron-log')
 const fetch = require('node-fetch')
 
-log.transports.file.level = "debug"
+log.transports.file.level = 'debug'
 autoUpdater.logger = log
 autoUpdater.on('update-downloaded', (info) => {
-  autoUpdater.quitAndInstall();
+  autoUpdater.quitAndInstall()
 })
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -20,7 +20,7 @@ function createWindow() {
     width: 800,
     height: 600,
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js')
+      preload: path.join(__dirname, 'preload.js'),
     },
     autoHideMenuBar: true,
     // show: false, // turn on for .ge
@@ -35,11 +35,13 @@ function createWindow() {
     Menu.buildFromTemplate([
       {
         label: 'About',
-        role: 'about'
+        role: 'about',
       },
       {
         label: 'Quit',
-        click() { app.exit(0); }
+        click() {
+          app.exit(0)
+        },
       },
     ])
   )
@@ -56,21 +58,21 @@ function createWindow() {
   })
 
   // set safe guards after a while to avoid infinite reload
-  setTimeout(() => setSafeGuards(mainWindow, app), 1000 * 60 * 10);
+  setTimeout(() => setSafeGuards(mainWindow, app), 1000 * 60 * 10)
 
   // mainWindow.webContents.openDevTools()
 
-  mainWindow.on('closed', function() {
+  mainWindow.on('closed', function () {
     mainWindow = null
   })
 
-  mainWindow.on('close', e => {
+  mainWindow.on('close', (e) => {
     e.preventDefault()
-    mainWindow.hide();
-  });
+    mainWindow.hide()
+  })
 
-  ipcMain.on('doScreenshot', handleDoScreenshot);
-  ipcMain.handle('getVersion', handleGetVersion);
+  ipcMain.on('doScreenshot', handleDoScreenshot)
+  ipcMain.handle('getVersion', handleGetVersion)
 
   autoUpdater.checkForUpdatesAndNotify()
 }
@@ -78,15 +80,15 @@ function createWindow() {
 // autorun
 app.setLoginItemSettings({
   openAtLogin: true,
-});
+})
 
 app.on('ready', createWindow)
 
-app.on('window-all-closed', function() {
+app.on('window-all-closed', function () {
   if (process.platform !== 'darwin') app.quit()
 })
 
-app.on('activate', function() {
+app.on('activate', function () {
   if (mainWindow === null) createWindow()
 })
 
@@ -111,12 +113,12 @@ function show() {
 
 // setup guards that will restart the app in case of freezed web player
 function setSafeGuards(mainWindow, app) {
-  mainWindow.webContents.on('crashed', e => {
+  mainWindow.webContents.on('crashed', (e) => {
     console.error(e)
     reloadWebPlayer(app)
   })
 
-  mainWindow.webContents.on('unresponsive', e => {
+  mainWindow.webContents.on('unresponsive', (e) => {
     console.error(e)
     reloadWebPlayer(app)
   })
@@ -130,14 +132,14 @@ function reloadWebPlayer(app) {
 }
 
 function handleDoScreenshot(event, url) {
-  mainWindow.webContents.capturePage().then(image => {
+  mainWindow.webContents.capturePage().then((image) => {
     fetch(url, {
       method: 'PUT',
-      body: image.toJPEG(75)
+      body: image.toJPEG(75),
     })
   })
 }
 
 function handleGetVersion() {
-  return app.getVersion();
+  return app.getVersion()
 }
