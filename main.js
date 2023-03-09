@@ -3,6 +3,7 @@ const path = require('path')
 const { autoUpdater } = require('electron-updater')
 const log = require('electron-log')
 const fetch = require('node-fetch')
+const { screen } = require('electron')
 
 log.transports.file.level = 'debug'
 autoUpdater.logger = log
@@ -14,17 +15,35 @@ autoUpdater.on('update-downloaded', (info) => {
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow
 let tr
+const windows = new Set()
 
 function createWindow() {
+  const primaryDisplay = screen.getPrimaryDisplay()
+  const { width, height } = primaryDisplay.workAreaSize
+
   mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width,
+    height,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
     },
     autoHideMenuBar: true,
-    // show: false, // turn on for .ge
+    // show: false, // uncomment for .ge
   })
+
+  const displays = screen.getAllDisplays()
+  console.log(JSON.stringify({ displays }, null, 2))
+  const externalDisplay = displays.find((display) => {
+    return display.bounds.x !== 0 || display.bounds.y !== 0
+  })
+
+  if (externalDisplay) {
+    win = new BrowserWindow({
+      x: externalDisplay.bounds.x + 50,
+      y: externalDisplay.bounds.y + 50,
+    })
+    win.loadURL('https://github.com')
+  }
 
   const iconPath = path.join(__dirname, 'icon.png')
   tr = new Tray(iconPath)
