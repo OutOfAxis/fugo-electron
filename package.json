@@ -1,6 +1,6 @@
 {
   "name": "fugo-cms-windows-player",
-  "version": "1.7.0",
+  "version": "1.8.0",
   "description": "Fugo CMS Windows Player",
   "main": "main.js",
   "scripts": {
@@ -13,18 +13,32 @@
     "digital signage",
     "dooh"
   ],
-  "author": "Fugo team",
+  "author": "outofaxis limited",
   "devDependencies": {
-    "electron": "^18.1.0",
-    "electron-builder": "^23.0.3"
+    "electron": "^23.1.4",
+    "electron-builder": "^23.6.0"
   },
   "build": {
     "appId": "ai.fugo.windowplayer",
     "mac": {
       "category": "public.app-category.business"
     },
+    "appx": {
+      "publisher": "E=zuka@fugo.ai, CN=outofaxis limited, O=outofaxis limited, STREET=\"Gullane, Grove End Lane\", L=Esher, S=Surrey, C=GB, OID.1.3.6.1.4.1.311.60.2.1.3=GB, SERIALNUMBER=08603300, OID.2.5.4.15=Private Organization",
+      "applicationId": "ai.fugo.windowsplayer",
+      "backgroundColor": "#7048e8",
+      "displayName": "Fugo Player",
+      "customExtensionsPath": "appmanifest.xml",
+      "publisherDisplayName": "outofaxis limited"
+    },
     "win": {
+      "publisherName": "outofaxis limited",
+      "certificateSubjectName": "outofaxis limited",
       "target": [
+        {
+          "target": "appx",
+          "arch": "x64"
+        },
         {
           "target": "nsis",
           "arch": [
@@ -41,8 +55,8 @@
     "semi": false
   },
   "dependencies": {
-    "electron-log": "^4.4.6",
-    "electron-updater": "^5.0.1",
-    "node-fetch": "^2.6.7"
+    "electron-log": "^4.4.8",
+    "electron-updater": "^5.3.0",
+    "node-fetch": "^2.6.9"
   }
 }
