@@ -1,0 +1,2 @@
+<uap:Extension Category="windows.lockScreenCall" />
+<uap:Extension Category="windows.aboveLockScreen" />
