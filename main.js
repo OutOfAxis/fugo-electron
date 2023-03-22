@@ -23,8 +23,13 @@ function createWindow() {
     height: 600,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
+      webSecurity: false,
+      allowRunningInsecureContent: true,
+      autoplayPolicy: "no-user-gesture-required"
     },
     autoHideMenuBar: true,
+    kiosk: true,
+    alwaysOnTop: true,
     // show: false, // turn on for .ge
   })
 
@@ -71,7 +76,6 @@ function createWindow() {
   mainWindow.on('close', (e) => {
     if (!shouldQuitForUpdate) {
       e.preventDefault()
-      mainWindow.hide()
     }
   })
 
