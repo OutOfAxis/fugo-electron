@@ -6,7 +6,9 @@ const fetch = require('node-fetch')
 
 log.transports.file.level = 'debug'
 autoUpdater.logger = log
+let shouldQuitForUpdate = false
 autoUpdater.on('update-downloaded', (info) => {
+  shouldQuitForUpdate = true;
   autoUpdater.quitAndInstall()
 })
 
@@ -67,8 +69,10 @@ function createWindow() {
   })
 
   mainWindow.on('close', (e) => {
-    e.preventDefault()
-    mainWindow.hide()
+    if (!shouldQuitForUpdate) {
+      e.preventDefault()
+      mainWindow.hide()
+    }
   })
 
   ipcMain.on('doScreenshot', handleDoScreenshot)

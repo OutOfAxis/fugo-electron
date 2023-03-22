@@ -1,6 +1,6 @@
 {
   "name": "fugo-cms-windows-player",
-  "version": "1.8.0",
+  "version": "1.9.0",
   "description": "Fugo CMS Windows Player",
   "main": "main.js",
   "scripts": {
