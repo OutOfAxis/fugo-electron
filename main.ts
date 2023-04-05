@@ -8,7 +8,7 @@ log.transports.file.level = 'debug'
 autoUpdater.logger = log
 let shouldQuitForUpdate = false
 autoUpdater.on('update-downloaded', (info) => {
-  shouldQuitForUpdate = true;
+  shouldQuitForUpdate = true
   autoUpdater.quitAndInstall()
 })
 
@@ -22,13 +22,13 @@ function createWindow() {
     width: 800,
     height: 600,
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js'),
+      preload: path.join(__dirname, 'preload.ts'),
       webSecurity: false,
       allowRunningInsecureContent: true,
-      autoplayPolicy: "no-user-gesture-required"
+      autoplayPolicy: 'no-user-gesture-required',
     },
     autoHideMenuBar: true,
-    kiosk: true,
+    kiosk: app.isPackaged,
     alwaysOnTop: true,
     // show: false, // turn on for .ge
   })
