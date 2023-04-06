@@ -26,10 +26,12 @@ function createWindow() {
       webSecurity: false,
       allowRunningInsecureContent: true,
       autoplayPolicy: 'no-user-gesture-required',
+      nodeIntegration: true,
     },
     autoHideMenuBar: true,
     kiosk: app.isPackaged,
     alwaysOnTop: true,
+
     // show: false, // turn on for .ge
   })
 
@@ -53,21 +55,21 @@ function createWindow() {
     ])
   )
 
-  const webPlayerURL = 'https://player.fugo.ai'
+  const webPlayerURL = 'http://localhost:3001/'
   mainWindow.loadURL(webPlayerURL)
 
   mainWindow.webContents.on('dom-ready', () => {
     // we can't just set BrowserWindow.setFullscreen(true) because HTML5 fullscreen API will stop working
-    mainWindow.webContents.executeJavaScript(
-      'document.documentElement.requestFullscreen()',
-      true
-    )
+    // mainWindow.webContents.executeJavaScript(
+    //   'document.documentElement.requestFullscreen()',
+    //   true
+    // )
   })
 
   // set safe guards after a while to avoid infinite reload
   setTimeout(() => setSafeGuards(mainWindow, app), 1000 * 60 * 10)
 
-  // mainWindow.webContents.openDevTools()
+  mainWindow.webContents.openDevTools()
 
   mainWindow.on('closed', function () {
     mainWindow = null

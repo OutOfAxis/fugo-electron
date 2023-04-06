@@ -15,7 +15,7 @@
   ],
   "author": "outofaxis limited",
   "devDependencies": {
-    "electron": "^23.1.4",
+    "electron": "^24.0.0",
     "electron-builder": "^23.6.0"
   },
   "build": {
@@ -57,6 +57,7 @@
   "dependencies": {
     "electron-log": "^4.4.8",
     "electron-updater": "^5.3.0",
-    "node-fetch": "^2.6.9"
-  }
+    "node-fetch": "2.6.9"
+  },
+  "type": "module"
 }
