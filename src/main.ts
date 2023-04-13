@@ -28,12 +28,12 @@ function createWindow() {
       webSecurity: false,
       allowRunningInsecureContent: true,
       autoplayPolicy: 'no-user-gesture-required',
-      nodeIntegration: true,
+      nodeIntegration: false,
     },
     autoHideMenuBar: true,
     kiosk: app.isPackaged,
     alwaysOnTop: true,
-    // show: false, // turn on for .ge
+    show: false
   })
   console.log('hm')
 
@@ -58,9 +58,11 @@ function createWindow() {
   )
 
   console.log('before load url')
-  const webPlayerURL = 'http://localhost:3001/'
+  const webPlayerURL = 'https://deploy-preview-429--fugo-player.netlify.app/'
   mainWindow.loadURL(webPlayerURL)
   console.log('load url')
+  mainWindow.setAlwaysOnTop(true, "screen-saver")
+  mainWindow.show()
 
   mainWindow.webContents.on('dom-ready', () => {
     // we can't just set BrowserWindow.setFullscreen(true) because HTML5 fullscreen API will stop working
@@ -146,11 +148,11 @@ function handlePrepareWebsiteFullscreen(
       webSecurity: false,
       allowRunningInsecureContent: true,
       autoplayPolicy: 'no-user-gesture-required',
-      nodeIntegration: true,
+      nodeIntegration: false,
     },
     autoHideMenuBar: true,
     kiosk: app.isPackaged,
-    alwaysOnTop: true,
+    alwaysOnTop: false,
     show: false,
     fullscreen: true,
   })
@@ -166,7 +168,11 @@ function handleDisplayWebsiteFullscreen(_event: any) {
   console.log('handleDisplayWebsiteFullscreen' + preparingFullscreenWebsiteId)
   displayingFullscreenWebsiteId = preparingFullscreenWebsiteId
   preparingFullscreenWebsiteId = ''
+  mainWindow.setAlwaysOnTop(false)
+  mainWindow.hide()
   displayWebsites[displayingFullscreenWebsiteId].show()
+  displayWebsites[displayingFullscreenWebsiteId].focus()
+  displayWebsites[displayingFullscreenWebsiteId].setAlwaysOnTop(true, "screen-saver")
 }
 
 function handleDestroyWebsiteFullscreen(_event: any, id: string = '') {
@@ -175,6 +181,7 @@ function handleDestroyWebsiteFullscreen(_event: any, id: string = '') {
     displayingFullscreenWebsiteId = ''
   }
   console.log('destroy ' + id)
+  displayWebsites[id].setAlwaysOnTop(false)
   displayWebsites[id].hide()
   displayWebsites[id].close()
   displayWebsites[id].destroy()
@@ -182,6 +189,8 @@ function handleDestroyWebsiteFullscreen(_event: any, id: string = '') {
   delete displayWebsites[id]
 
   if (!preparingFullscreenWebsiteId) {
+    mainWindow.show()
+    mainWindow.setAlwaysOnTop(true, "screen-saver")
     mainWindow.focus()
   }
 }
