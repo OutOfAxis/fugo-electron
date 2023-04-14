@@ -1,20 +1,22 @@
+import { NativeImage } from 'electron'
+
 const { app, BrowserWindow, Tray, Menu, ipcMain } = require('electron')
 const path = require('path')
 const { autoUpdater } = require('electron-updater')
 const log = require('electron-log')
-const nodeFetch = require('node-fetch')
+const fetch = require('node-fetch')
 
 log.transports.file.level = 'debug'
 autoUpdater.logger = log
 let shouldQuitForUpdate = false
-autoUpdater.on('update-downloaded', (info) => {
+autoUpdater.on('update-downloaded', () => {
   shouldQuitForUpdate = true
   autoUpdater.quitAndInstall()
 })
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
-let mainWindow
+let mainWindow: Electron.BrowserWindow | null = null
 let tr
 
 function createWindow() {
@@ -26,11 +28,12 @@ function createWindow() {
       webSecurity: false,
       allowRunningInsecureContent: true,
       autoplayPolicy: 'no-user-gesture-required',
+      nodeIntegration: false,
     },
     autoHideMenuBar: true,
-    kiosk: true,
+    kiosk: app.isPackaged,
     alwaysOnTop: true,
-    // show: false, // turn on for .ge
+    show: false,
   })
 
   const iconPath = path.join(__dirname, '../icon.png')
@@ -55,6 +58,8 @@ function createWindow() {
 
   const webPlayerURL = 'https://player.fugo.ai'
   mainWindow.loadURL(webPlayerURL)
+  mainWindow.setAlwaysOnTop(true, 'screen-saver')
+  mainWindow.show()
 
   mainWindow.webContents.on('dom-ready', () => {
     // we can't just set BrowserWindow.setFullscreen(true) because HTML5 fullscreen API will stop working
@@ -73,7 +78,7 @@ function createWindow() {
     mainWindow = null
   })
 
-  mainWindow.on('close', (e) => {
+  mainWindow.on('close', (e: any) => {
     if (!shouldQuitForUpdate) {
       e.preventDefault()
     }
@@ -82,7 +87,109 @@ function createWindow() {
   ipcMain.on('doScreenshot', handleDoScreenshot)
   ipcMain.handle('getVersion', handleGetVersion)
 
+  ipcMain.handle('prepareWebsite', handlePrepareWebsite)
+  ipcMain.handle('displayWebsite', handleDisplayWebsite)
+  ipcMain.handle('destroyWebsite', handleDestroyWebsite)
+  ipcMain.handle('prepareWebsiteFullscreen', handlePrepareWebsiteFullscreen)
+  ipcMain.handle('displayWebsiteFullscreen', handleDisplayWebsiteFullscreen)
+  ipcMain.handle('destroyWebsiteFullscreen', handleDestroyWebsiteFullscreen)
+
   autoUpdater.checkForUpdatesAndNotify()
+}
+
+let preparingFullscreenWebsiteId = ''
+let displayingFullscreenWebsiteId = ''
+let displayWebsites: { [keys: string]: Electron.BrowserWindow } = {}
+function handlePrepareWebsite(
+  event: any,
+  url: string,
+  code: string,
+  orientation: number,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  id: string
+) {
+  handlePrepareWebsiteFullscreen(event, url, code, orientation)
+}
+
+function handleDisplayWebsite(event: any, id: string) {
+  handleDisplayWebsiteFullscreen(event)
+}
+
+function handleDestroyWebsite(event: any, id: string) {
+  handleDestroyWebsiteFullscreen(event)
+}
+
+function handlePrepareWebsiteFullscreen(
+  _event: any,
+  url: string,
+  code: string,
+  orientation: number
+) {
+  console.log('handlePrepareWebsiteFullscreen')
+  if (preparingFullscreenWebsiteId) {
+    handleDestroyWebsiteFullscreen(_event, preparingFullscreenWebsiteId)
+  }
+
+  const id = Math.random().toString()
+  preparingFullscreenWebsiteId = id
+  console.log('preparing ' + id)
+
+  displayWebsites[id] = new BrowserWindow({
+    webPreferences: {
+      preload: path.join(__dirname, 'preload.js'),
+      webSecurity: false,
+      allowRunningInsecureContent: true,
+      autoplayPolicy: 'no-user-gesture-required',
+      nodeIntegration: false,
+    },
+    autoHideMenuBar: true,
+    kiosk: app.isPackaged,
+    alwaysOnTop: false,
+    show: false,
+    fullscreen: true,
+  })
+  displayWebsites[id].loadURL(url)
+
+  displayWebsites[id].webContents.on('did-finish-load', () => {
+    console.log('executeJavaScript')
+    displayWebsites[id].webContents.executeJavaScript(code)
+  })
+}
+
+function handleDisplayWebsiteFullscreen(_event: any) {
+  console.log('handleDisplayWebsiteFullscreen' + preparingFullscreenWebsiteId)
+  displayingFullscreenWebsiteId = preparingFullscreenWebsiteId
+  preparingFullscreenWebsiteId = ''
+  mainWindow.setAlwaysOnTop(false)
+  mainWindow.hide()
+  const websiteWindow = displayWebsites[displayingFullscreenWebsiteId]
+  websiteWindow.show()
+  websiteWindow.focus()
+  websiteWindow.setAlwaysOnTop(true, 'screen-saver')
+}
+
+function handleDestroyWebsiteFullscreen(_event: any, id: string = '') {
+  if (!id) {
+    id = displayingFullscreenWebsiteId
+    displayingFullscreenWebsiteId = ''
+  }
+  console.log('destroy ' + id)
+  const websiteWindow = displayWebsites[id]
+  websiteWindow.setAlwaysOnTop(false)
+  websiteWindow.hide()
+  websiteWindow.close()
+  websiteWindow.destroy()
+  displayWebsites[id] = null
+  delete displayWebsites[id]
+
+  if (!preparingFullscreenWebsiteId) {
+    mainWindow.show()
+    mainWindow.setAlwaysOnTop(true, 'screen-saver')
+    mainWindow.focus()
+  }
 }
 
 // autorun
@@ -120,27 +227,30 @@ function show() {
 }
 
 // setup guards that will restart the app in case of freezed web player
-function setSafeGuards(mainWindow, app) {
-  mainWindow.webContents.on('crashed', (e) => {
+function setSafeGuards(
+  mainWindow: Electron.BrowserWindow,
+  appGuarded: typeof app
+) {
+  mainWindow.webContents.on('crashed', (e: any) => {
     console.error(e)
-    reloadWebPlayer(app)
+    reloadWebPlayer(appGuarded)
   })
 
-  mainWindow.webContents.on('unresponsive', (e) => {
+  mainWindow.webContents.on('unresponsive', (e: any) => {
     console.error(e)
-    reloadWebPlayer(app)
+    reloadWebPlayer(appGuarded)
   })
 
   console.log('Safe guards are set')
 }
 
-function reloadWebPlayer(app) {
-  app.relaunch()
-  app.exit(0)
+function reloadWebPlayer(appGuarded: typeof app) {
+  appGuarded.relaunch()
+  appGuarded.exit(0)
 }
 
-function handleDoScreenshot(event, url) {
-  mainWindow.webContents.capturePage().then((image) => {
+function handleDoScreenshot(event: any, url: string) {
+  mainWindow.webContents.capturePage().then((image: NativeImage) => {
     fetch(url, {
       method: 'PUT',
       body: image.toJPEG(75),
