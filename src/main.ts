@@ -2,13 +2,13 @@ const { app, BrowserWindow, Tray, Menu, ipcMain } = require('electron')
 const path = require('path')
 const { autoUpdater } = require('electron-updater')
 const log = require('electron-log')
-const fetch = require('node-fetch')
+const nodeFetch = require('node-fetch')
 
 log.transports.file.level = 'debug'
 autoUpdater.logger = log
 let shouldQuitForUpdate = false
 autoUpdater.on('update-downloaded', (info) => {
-  shouldQuitForUpdate = true;
+  shouldQuitForUpdate = true
   autoUpdater.quitAndInstall()
 })
 
@@ -25,7 +25,7 @@ function createWindow() {
       preload: path.join(__dirname, 'preload.js'),
       webSecurity: false,
       allowRunningInsecureContent: true,
-      autoplayPolicy: "no-user-gesture-required"
+      autoplayPolicy: 'no-user-gesture-required',
     },
     autoHideMenuBar: true,
     kiosk: true,
@@ -33,7 +33,7 @@ function createWindow() {
     // show: false, // turn on for .ge
   })
 
-  const iconPath = path.join(__dirname, 'icon.png')
+  const iconPath = path.join(__dirname, '../icon.png')
   tr = new Tray(iconPath)
   tr.addListener('click', () => {
     show()
