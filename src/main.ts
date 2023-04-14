@@ -170,9 +170,10 @@ function handleDisplayWebsiteFullscreen(_event: any) {
   preparingFullscreenWebsiteId = ''
   mainWindow.setAlwaysOnTop(false)
   mainWindow.hide()
-  displayWebsites[displayingFullscreenWebsiteId].show()
-  displayWebsites[displayingFullscreenWebsiteId].focus()
-  displayWebsites[displayingFullscreenWebsiteId].setAlwaysOnTop(true, "screen-saver")
+  const websiteWindow = displayWebsites[displayingFullscreenWebsiteId]
+  websiteWindow.show()
+  websiteWindow.focus()
+  websiteWindow.setAlwaysOnTop(true, "screen-saver")
 }
 
 function handleDestroyWebsiteFullscreen(_event: any, id: string = '') {
@@ -181,10 +182,11 @@ function handleDestroyWebsiteFullscreen(_event: any, id: string = '') {
     displayingFullscreenWebsiteId = ''
   }
   console.log('destroy ' + id)
-  displayWebsites[id].setAlwaysOnTop(false)
-  displayWebsites[id].hide()
-  displayWebsites[id].close()
-  displayWebsites[id].destroy()
+  const websiteWindow = displayWebsites[id]
+  websiteWindow.setAlwaysOnTop(false)
+  websiteWindow.hide()
+  websiteWindow.close()
+  websiteWindow.destroy()
   displayWebsites[id] = null
   delete displayWebsites[id]
 
