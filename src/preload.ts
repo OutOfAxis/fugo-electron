@@ -1,7 +1,3 @@
-// All of the Node.js APIs are available in the preload process.
-// const { BrowserWindow } = require('electron')
-
-// It has the same sandbox as a Chrome extension.
 const { contextBridge, ipcRenderer } = require('electron')
 let version: string = ''
 

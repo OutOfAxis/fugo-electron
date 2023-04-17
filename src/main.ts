@@ -78,7 +78,7 @@ function createWindow() {
     mainWindow = null
   })
 
-  mainWindow.on('close', (e: any) => {
+  mainWindow.on('close', (e: Electron.Event) => {
     if (!shouldQuitForUpdate) {
       e.preventDefault()
     }
