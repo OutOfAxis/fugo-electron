@@ -1,6 +1,6 @@
 {
   "name": "fugo-cms-windows-player",
-  "version": "1.10.0",
+  "version": "1.11.0",
   "description": "Fugo CMS Windows Player",
   "main": "build/main.js",
   "scripts": {
@@ -21,7 +21,9 @@
     "electron-builder": "^23.6.0"
   },
   "build": {
-    "files": ["build/**/*"],
+    "files": [
+      "build/**/*"
+    ],
     "appId": "ai.fugo.windowplayer",
     "mac": {
       "category": "public.app-category.business"
