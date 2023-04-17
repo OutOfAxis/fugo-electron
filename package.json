@@ -2,11 +2,14 @@
   "name": "fugo-cms-windows-player",
   "version": "1.10.0",
   "description": "Fugo CMS Windows Player",
-  "main": "main.js",
+  "main": "main.ts",
   "scripts": {
-    "start": "electron .",
-    "pack": "electron-builder --dir",
-    "dist": "electron-builder -w"
+    "build": "tsc",
+    "watch": "tsc -w",
+    "start": "electron ./dist/main.js",
+    "pack": "npm run build && electron-builder --dir ./dist/main.js",
+    "dist": "npm run build && electron-builder -w ./dist/main.js",
+    "buildpreload": "tsc ./preload.ts"
   },
   "repository": "https://github.com/OutOfAxis/fugo-electron",
   "keywords": [
@@ -15,7 +18,7 @@
   ],
   "author": "outofaxis limited",
   "devDependencies": {
-    "electron": "^23.1.4",
+    "electron": "^24.0.0",
     "electron-builder": "^23.6.0"
   },
   "build": {
@@ -57,6 +60,7 @@
   "dependencies": {
     "electron-log": "^4.4.8",
     "electron-updater": "^5.3.0",
-    "node-fetch": "^2.6.9"
+    "node-fetch": "2.6.9",
+    "typescript": "^5.0.4"
   }
 }
