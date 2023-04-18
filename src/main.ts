@@ -36,7 +36,7 @@ function createWindow() {
     show: false,
   })
 
-  const iconPath = path.join(__dirname, '../icon.png')
+  const iconPath = path.join(__dirname, 'assets/icon.png')
   tr = new Tray(iconPath)
   tr.addListener('click', () => {
     show()
