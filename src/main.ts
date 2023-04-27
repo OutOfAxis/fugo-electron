@@ -250,7 +250,8 @@ function reloadWebPlayer(appGuarded: typeof app) {
 }
 
 function handleDoScreenshot(event: any, url: string) {
-  mainWindow.webContents.capturePage().then((image: NativeImage) => {
+  const window = displayingFullscreenWebsiteId && displayWebsites[displayingFullscreenWebsiteId] ? displayWebsites[displayingFullscreenWebsiteId] : mainWindow
+  window.webContents.capturePage().then((image: NativeImage) => {
     fetch(url, {
       method: 'PUT',
       body: image.toJPEG(75),
