@@ -65,18 +65,12 @@ async function createWindow() {
   mainWindow.setAlwaysOnTop(isKiosk, 'screen-saver')
   mainWindow.show()
 
-  mainWindow.webContents.on('dom-ready', () => {
-    // we can't just set BrowserWindow.setFullscreen(true) because HTML5 fullscreen API will stop working
-    mainWindow.webContents.executeJavaScript(
-      'document.documentElement.requestFullscreen()',
-      true
-    )
-  })
+  mainWindow.webContents.on('dom-ready', goFullscreen)
 
   // set safe guards after a while to avoid infinite reload
   setTimeout(() => setSafeGuards(mainWindow, app), 1000 * 60 * 10)
 
-  mainWindow.webContents.openDevTools()
+  // mainWindow.webContents.openDevTools()
 
   mainWindow.on('closed', function () {
     mainWindow = null
@@ -103,6 +97,14 @@ async function createWindow() {
   ipcMain.handle('destroyWebsiteFullscreen', handleDestroyWebsiteFullscreen)
 
   autoUpdater.checkForUpdatesAndNotify()
+}
+
+function goFullscreen() {
+  // we can't just set BrowserWindow.setFullscreen(true) because HTML5 fullscreen API will stop working
+  mainWindow.webContents.executeJavaScript(
+    'document.documentElement.requestFullscreen()',
+    true
+  )
 }
 
 let preparingFullscreenWebsiteId = ''
@@ -281,4 +283,7 @@ function handleSetKiosk(event: IpcMainInvokeEvent, isEnabled: boolean) {
   Settings.set({ isKiosk: isEnabled })
   mainWindow.setAlwaysOnTop(isEnabled, 'screen-saver')
   mainWindow.setKiosk(isEnabled)
+  if (isEnabled) {
+    goFullscreen()
+  }
 }
