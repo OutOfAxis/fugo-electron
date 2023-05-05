@@ -21,7 +21,6 @@ let mainWindow: Electron.BrowserWindow | null = null
 let tr
 
 async function createWindow() {
-  console.log(await Settings.get())
   const isKiosk = (await Settings.get()).isKiosk
   mainWindow = new BrowserWindow({
     width: 800,
@@ -59,8 +58,7 @@ async function createWindow() {
     ])
   )
 
-  // const webPlayerURL = 'https://player.fugo.ai'
-  const webPlayerURL = 'https://deploy-preview-438--fugo-player.netlify.app/'
+  const webPlayerURL = 'https://player.fugo.ai'
   mainWindow.loadURL(webPlayerURL)
   mainWindow.setAlwaysOnTop(isKiosk, 'screen-saver')
   mainWindow.show()
