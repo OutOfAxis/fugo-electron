@@ -1,4 +1,5 @@
-import { NativeImage } from 'electron'
+import { IpcMainInvokeEvent, NativeImage } from 'electron'
+import { Settings } from './settings'
 
 const { app, BrowserWindow, Tray, Menu, ipcMain } = require('electron')
 const path = require('path')
@@ -19,7 +20,8 @@ autoUpdater.on('update-downloaded', () => {
 let mainWindow: Electron.BrowserWindow | null = null
 let tr
 
-function createWindow() {
+async function createWindow() {
+  const isKiosk = (await Settings.get()).isKiosk
   mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
@@ -31,7 +33,7 @@ function createWindow() {
       nodeIntegration: false,
     },
     autoHideMenuBar: true,
-    kiosk: app.isPackaged,
+    kiosk: isKiosk,
     alwaysOnTop: true,
     show: false,
   })
@@ -58,16 +60,10 @@ function createWindow() {
 
   const webPlayerURL = 'https://player.fugo.ai'
   mainWindow.loadURL(webPlayerURL)
-  mainWindow.setAlwaysOnTop(true, 'screen-saver')
+  mainWindow.setAlwaysOnTop(isKiosk, 'screen-saver')
   mainWindow.show()
 
-  mainWindow.webContents.on('dom-ready', () => {
-    // we can't just set BrowserWindow.setFullscreen(true) because HTML5 fullscreen API will stop working
-    mainWindow.webContents.executeJavaScript(
-      'document.documentElement.requestFullscreen()',
-      true
-    )
-  })
+  mainWindow.webContents.on('dom-ready', goFullscreen)
 
   // set safe guards after a while to avoid infinite reload
   setTimeout(() => setSafeGuards(mainWindow, app), 1000 * 60 * 10)
@@ -78,14 +74,18 @@ function createWindow() {
     mainWindow = null
   })
 
-  mainWindow.on('close', (e: Electron.Event) => {
-    if (!shouldQuitForUpdate) {
-      e.preventDefault()
-    }
+  mainWindow.on('close', async (e: Electron.Event) => {
+    if (shouldQuitForUpdate) return
+
+    const isKiosk = (await Settings.get()).isKiosk
+    if (!isKiosk) return
+
+    e.preventDefault()
   })
 
   ipcMain.on('doScreenshot', handleDoScreenshot)
   ipcMain.handle('getVersion', handleGetVersion)
+  ipcMain.handle('setKiosk', handleSetKiosk)
 
   ipcMain.handle('prepareWebsite', handlePrepareWebsite)
   ipcMain.handle('displayWebsite', handleDisplayWebsite)
@@ -95,6 +95,14 @@ function createWindow() {
   ipcMain.handle('destroyWebsiteFullscreen', handleDestroyWebsiteFullscreen)
 
   autoUpdater.checkForUpdatesAndNotify()
+}
+
+function goFullscreen() {
+  // we can't just set BrowserWindow.setFullscreen(true) because HTML5 fullscreen API will stop working
+  mainWindow.webContents.executeJavaScript(
+    'document.documentElement.requestFullscreen()',
+    true
+  )
 }
 
 let preparingFullscreenWebsiteId = ''
@@ -171,7 +179,7 @@ function handleDisplayWebsiteFullscreen(_event: any) {
   websiteWindow.setAlwaysOnTop(true, 'screen-saver')
 }
 
-function handleDestroyWebsiteFullscreen(_event: any, id: string = '') {
+async function handleDestroyWebsiteFullscreen(_event: any, id: string = '') {
   if (!id) {
     id = displayingFullscreenWebsiteId
     displayingFullscreenWebsiteId = ''
@@ -186,8 +194,9 @@ function handleDestroyWebsiteFullscreen(_event: any, id: string = '') {
   delete displayWebsites[id]
 
   if (!preparingFullscreenWebsiteId) {
+    const isKiosk = (await Settings.get()).isKiosk
     mainWindow.show()
-    mainWindow.setAlwaysOnTop(true, 'screen-saver')
+    mainWindow.setAlwaysOnTop(isKiosk, 'screen-saver')
     mainWindow.focus()
   }
 }
@@ -250,7 +259,11 @@ function reloadWebPlayer(appGuarded: typeof app) {
 }
 
 function handleDoScreenshot(event: any, url: string) {
-  const window = displayingFullscreenWebsiteId && displayWebsites[displayingFullscreenWebsiteId] ? displayWebsites[displayingFullscreenWebsiteId] : mainWindow
+  const window =
+    displayingFullscreenWebsiteId &&
+    displayWebsites[displayingFullscreenWebsiteId]
+      ? displayWebsites[displayingFullscreenWebsiteId]
+      : mainWindow
   window.webContents.capturePage().then((image: NativeImage) => {
     fetch(url, {
       method: 'PUT',
@@ -261,4 +274,14 @@ function handleDoScreenshot(event: any, url: string) {
 
 function handleGetVersion() {
   return app.getVersion()
+}
+
+function handleSetKiosk(event: IpcMainInvokeEvent, isEnabled: boolean) {
+  console.log(`Setting kiosk: ${isEnabled ? 'enabled' : 'disabled'}`)
+  Settings.set({ isKiosk: isEnabled })
+  mainWindow.setAlwaysOnTop(isEnabled, 'screen-saver')
+  mainWindow.setKiosk(isEnabled)
+  if (isEnabled) {
+    goFullscreen()
+  }
 }

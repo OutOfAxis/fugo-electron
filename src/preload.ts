@@ -5,6 +5,11 @@ ipcRenderer.invoke('getVersion').then((v) => (version = v))
 
 const websites = {}
 let fugoElectronBridgeInstance: FugoElectronBridge = {
+  setKiosk(isEnabled: boolean) {
+    console.log('Received kiosk message', isEnabled)
+    ipcRenderer.invoke('setKiosk', isEnabled)
+  },
+
   doScreenshot(url) {
     ipcRenderer.send('doScreenshot', url)
   },
@@ -90,4 +95,5 @@ interface DisplayWebsite {
   displayWebsite: (id: string) => void
   destroyWebsiteFullscreen: () => void
   destroyWebsite: (id: string) => void
+  setKiosk(isEnabled: boolean): void
 }
