@@ -95,6 +95,9 @@ async function createWindow() {
   ipcMain.handle('destroyWebsiteFullscreen', handleDestroyWebsiteFullscreen)
 
   autoUpdater.checkForUpdatesAndNotify()
+  setInterval(() => {
+    autoUpdater.checkForUpdatesAndNotify()
+  }, 1000 * 60 * 60 * 1)
 }
 
 function goFullscreen() {
