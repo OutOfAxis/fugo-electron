@@ -101,6 +101,7 @@ async function createWindow() {
 }
 
 function goFullscreen() {
+  console.log("Go fullscreen")
   // we can't just set BrowserWindow.setFullscreen(true) because HTML5 fullscreen API will stop working
   mainWindow.webContents.executeJavaScript(
     'document.documentElement.requestFullscreen()',
@@ -284,7 +285,5 @@ function handleSetKiosk(event: IpcMainInvokeEvent, isEnabled: boolean) {
   Settings.set({ isKiosk: isEnabled })
   mainWindow.setAlwaysOnTop(isEnabled, 'screen-saver')
   mainWindow.setKiosk(isEnabled)
-  if (isEnabled) {
-    goFullscreen()
-  }
+  goFullscreen()
 }

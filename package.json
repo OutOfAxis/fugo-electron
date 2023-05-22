@@ -1,12 +1,12 @@
 {
   "name": "fugo-cms-windows-player",
-  "version": "1.13.0",
+  "version": "1.14.0",
   "description": "Fugo CMS Windows Player",
   "main": "build/main.js",
   "scripts": {
     "build": "tsc && npm run copyassets",
     "watch": "tsc -w",
-    "start": "electron ./build/main.js",
+    "start": "tsc && electron ./build/main.js",
     "copyassets": "copyfiles -u 1 src/assets/* build",
     "dist": "npm run build && electron-builder -w",
     "buildpreload": "tsc ./preload.ts"
