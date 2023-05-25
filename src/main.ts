@@ -70,6 +70,10 @@ async function createWindow() {
 
   // mainWindow.webContents.openDevTools()
 
+  mainWindow.on('maximize', () => {
+    goFullscreen();
+  })
+
   mainWindow.on('closed', function () {
     mainWindow = null
   })
@@ -265,7 +269,7 @@ function reloadWebPlayer(appGuarded: typeof app) {
 function handleDoScreenshot(event: any, url: string) {
   const window =
     displayingFullscreenWebsiteId &&
-    displayWebsites[displayingFullscreenWebsiteId]
+      displayWebsites[displayingFullscreenWebsiteId]
       ? displayWebsites[displayingFullscreenWebsiteId]
       : mainWindow
   window.webContents.capturePage().then((image: NativeImage) => {
