@@ -99,6 +99,15 @@ async function createWindow() {
 
   autoUpdater.checkForUpdatesAndNotify()
   setInterval(() => {
+    // https://stackoverflow.com/questions/67191654/problem-with-app-update-yml-files-is-not-generated-in-electron
+    // https://github.com/electron-userland/electron-builder/issues/4233
+    // not ideal, but the idea is that it's going to use app-update.yml on startup
+    // and then use the feed url below if it's not available
+    autoUpdater.setFeedURL({
+      provider: 'github',
+      owner: 'OutOfAxis',
+      repo: 'fugo-electron',
+    })
     autoUpdater.checkForUpdatesAndNotify()
   }, 1000 * 60 * 60 * 1)
 }
