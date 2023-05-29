@@ -1,4 +1,4 @@
-import { IpcMainInvokeEvent, NativeImage } from 'electron'
+import { IpcMainInvokeEvent, NativeImage, powerSaveBlocker } from 'electron'
 import { Settings } from './settings'
 
 const { app, BrowserWindow, Tray, Menu, ipcMain } = require('electron')
@@ -14,6 +14,9 @@ autoUpdater.on('update-downloaded', () => {
   shouldQuitForUpdate = true
   autoUpdater.quitAndInstall()
 })
+
+const id = powerSaveBlocker.start('prevent-display-sleep')
+console.log('Started power block: ' + powerSaveBlocker.isStarted(id))
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -100,12 +103,21 @@ async function createWindow() {
 
   autoUpdater.checkForUpdatesAndNotify()
   setInterval(() => {
+    // https://stackoverflow.com/questions/67191654/problem-with-app-update-yml-files-is-not-generated-in-electron
+    // https://github.com/electron-userland/electron-builder/issues/4233
+    // not ideal, but the idea is that it's going to use app-update.yml on startup
+    // and then use the feed url below if it's not available
+    autoUpdater.setFeedURL({
+      provider: 'github',
+      owner: 'OutOfAxis',
+      repo: 'fugo-electron',
+    })
     autoUpdater.checkForUpdatesAndNotify()
   }, 1000 * 60 * 60 * 1)
 }
 
 function goFullscreen() {
-  console.log("Go fullscreen")
+  console.log('Go fullscreen')
   // we can't just set BrowserWindow.setFullscreen(true) because HTML5 fullscreen API will stop working
   mainWindow.webContents.executeJavaScript(
     'document.documentElement.requestFullscreen()',
