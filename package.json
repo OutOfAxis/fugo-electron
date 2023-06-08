@@ -19,7 +19,8 @@
   "author": "outofaxis limited",
   "devDependencies": {
     "electron": "^24.0.0",
-    "electron-builder": "^23.6.0"
+    "electron-builder": "^23.6.0",
+    "electron-packager": "^17.1.1"
   },
   "build": {
     "files": [
@@ -41,10 +42,6 @@
       "publisherName": "outofaxis limited",
       "certificateSubjectName": "outofaxis limited",
       "target": [
-        {
-          "target": "appx",
-          "arch": "x64"
-        },
         {
           "target": "nsis",
           "arch": [
