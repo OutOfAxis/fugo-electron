@@ -25,6 +25,7 @@ let tr
 
 async function createWindow() {
   const isKiosk = (await Settings.get()).isKiosk
+  console.log(`Kiosk settings: ${isKiosk}`)
   mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
@@ -296,10 +297,15 @@ function handleGetVersion() {
   return app.getVersion()
 }
 
-function handleSetKiosk(event: IpcMainInvokeEvent, isEnabled: boolean) {
-  console.log(`Setting kiosk: ${isEnabled ? 'enabled' : 'disabled'}`)
-  Settings.set({ isKiosk: isEnabled })
-  mainWindow.setAlwaysOnTop(isEnabled, 'screen-saver')
-  mainWindow.setKiosk(isEnabled)
+async function handleSetKiosk(event: IpcMainInvokeEvent, isEnabled: boolean) {
+  const currentSettingsValue = (await Settings.get()).isKiosk
+  console.log(`Setting kiosk to ${isEnabled}. Settings state: ${currentSettingsValue}. App state: ${mainWindow.isKiosk()}`)
+  await Settings.set({ isKiosk: isEnabled })
+  // avoid setting it to the same value because it breaks fullscreen mode
+  // PlayerJS sets it to false on startup if player was unpaired before
+  if (currentSettingsValue !== isEnabled) {
+    mainWindow.setAlwaysOnTop(isEnabled, 'screen-saver')
+    mainWindow.setKiosk(isEnabled)
+  }
   goFullscreen()
 }
