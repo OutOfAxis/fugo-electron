@@ -3,6 +3,7 @@ import {
   NativeImage,
   nativeImage,
   powerSaveBlocker,
+  screen,
 } from 'electron'
 import { Settings } from './settings'
 
@@ -123,7 +124,7 @@ async function createWindow() {
     })
     autoUpdater.checkForUpdatesAndNotify()
   }, 1000 * 60 * 60 * 1)
-  await mouse.setPosition(new Point(500, 500))
+  await mouse.setPosition(new Point(0, screen.getPrimaryDisplay().size.height))
 }
 
 function goFullscreen() {
