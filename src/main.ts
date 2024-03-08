@@ -6,6 +6,7 @@ import {
 } from 'electron'
 import { Settings } from './settings'
 
+const { mouse, Point } = require('@nut-tree/nut-js')
 const { app, BrowserWindow, Tray, Menu, ipcMain } = require('electron')
 const path = require('path')
 const { autoUpdater } = require('electron-updater')
@@ -122,6 +123,7 @@ async function createWindow() {
     })
     autoUpdater.checkForUpdatesAndNotify()
   }, 1000 * 60 * 60 * 1)
+  await mouse.setPosition(new Point(500, 500))
 }
 
 function goFullscreen() {
