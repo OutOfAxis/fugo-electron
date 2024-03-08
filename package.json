@@ -1,7 +1,7 @@
 {
-  "name": "fugo-cms-windows-player",
+  "name": "fugo-player",
   "version": "1.16.0",
-  "description": "Fugo CMS Windows Player",
+  "description": "Fugo Player",
   "main": "build/main.js",
   "scripts": {
     "build": "tsc && npm run copyassets",
@@ -9,7 +9,7 @@
     "start": "tsc && electron ./build/main.js",
     "copyassets": "copyfiles -u 1 src/assets/* build",
     "dist": "npm run build && electron-builder -w",
-    "dist-m": "electron-builder",
+    "dist-m": "npm run build && copyfiles -f src/assets/* build  && electron-builder -m",
     "buildpreload": "tsc ./preload.ts"
   },
   "repository": "https://github.com/OutOfAxis/fugo-electron",
@@ -27,7 +27,7 @@
     "files": [
       "build/**/*"
     ],
-    "appId": "ai.fugo.windowplayer",
+    "appId": "ai.fugo.player",
     "mac": {
       "type": "distribution",
       "target": [
