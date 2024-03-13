@@ -68,6 +68,7 @@ async function createWindow() {
   mainWindow.show()
 
   mainWindow.webContents.on('dom-ready', goFullscreen)
+  mainWindow.webContents.on('console-message', handleConsoleMessage)
 
   // set safe guards after a while to avoid infinite reload
   setTimeout(() => setSafeGuards(mainWindow, app), 1000 * 60 * 10)
@@ -308,4 +309,11 @@ async function handleSetKiosk(event: IpcMainInvokeEvent, isEnabled: boolean) {
     mainWindow.setKiosk(isEnabled)
   }
   goFullscreen()
+}
+
+function handleConsoleMessage(event: any, level: number, message: string, line: number, sourceId: string) {
+  const log = btoa(`${message} -- From line ${line} of ${sourceId}`)
+  mainWindow.webContents.executeJavaScript(
+    `window.globalLog && window.globalLog('${log}')`
+  )
 }
