@@ -71,7 +71,7 @@ async function createWindow() {
     ])
   )
 
-  const webPlayerURL = 'https://player.fugo.ai/?platform=mac'
+  const webPlayerURL = `https://player.fugo.ai/?platform=${process.platform}`
   mainWindow.loadURL(webPlayerURL)
   mainWindow.setAlwaysOnTop(isKiosk, 'screen-saver')
   mainWindow.show()
