@@ -62,6 +62,14 @@ let fugoElectronBridgeInstance: FugoElectronBridge = {
   destroyWebsiteFullscreen() {
     ipcRenderer.invoke('destroyWebsiteFullscreen')
   },
+
+  getSystemMemoryInfo() {
+    return process.getSystemMemoryInfo()
+  },
+
+  getPlatform() {
+    return process.platform
+  },
 }
 
 contextBridge.exposeInMainWorld(
@@ -96,4 +104,6 @@ interface DisplayWebsite {
   destroyWebsiteFullscreen: () => void
   destroyWebsite: (id: string) => void
   setKiosk(isEnabled: boolean): void
+  getSystemMemoryInfo(): { total: number; free: number }
+  getPlatform(): NodeJS.Platform
 }

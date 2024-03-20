@@ -1,6 +1,13 @@
-import { IpcMainInvokeEvent, NativeImage, powerSaveBlocker } from 'electron'
+import {
+  IpcMainInvokeEvent,
+  NativeImage,
+  nativeImage,
+  powerSaveBlocker,
+  screen,
+} from 'electron'
 import { Settings } from './settings'
 
+const { mouse, Point } = require('@nut-tree/nut-js')
 const { app, BrowserWindow, Tray, Menu, ipcMain } = require('electron')
 const path = require('path')
 const { autoUpdater } = require('electron-updater')
@@ -43,7 +50,9 @@ async function createWindow() {
   })
 
   const iconPath = path.join(__dirname, 'assets/icon.png')
-  tr = new Tray(iconPath)
+  const iconImage = nativeImage.createFromPath(iconPath)
+  tr = new Tray(iconImage.resize({ width: 16, height: 16 }))
+
   tr.addListener('click', () => {
     show()
   })
@@ -62,7 +71,7 @@ async function createWindow() {
     ])
   )
 
-  const webPlayerURL = 'https://player.fugo.ai'
+  const webPlayerURL = `https://player.fugo.ai/`
   mainWindow.loadURL(webPlayerURL)
   mainWindow.setAlwaysOnTop(isKiosk, 'screen-saver')
   mainWindow.show()
@@ -75,7 +84,7 @@ async function createWindow() {
   // mainWindow.webContents.openDevTools()
 
   mainWindow.on('maximize', () => {
-    goFullscreen();
+    goFullscreen()
   })
 
   mainWindow.on('closed', function () {
@@ -115,6 +124,7 @@ async function createWindow() {
     })
     autoUpdater.checkForUpdatesAndNotify()
   }, 1000 * 60 * 60 * 1)
+  await mouse.setPosition(new Point(0, screen.getPrimaryDisplay().size.height))
 }
 
 function goFullscreen() {
@@ -282,7 +292,7 @@ function reloadWebPlayer(appGuarded: typeof app) {
 function handleDoScreenshot(event: any, url: string) {
   const window =
     displayingFullscreenWebsiteId &&
-      displayWebsites[displayingFullscreenWebsiteId]
+    displayWebsites[displayingFullscreenWebsiteId]
       ? displayWebsites[displayingFullscreenWebsiteId]
       : mainWindow
   window.webContents.capturePage().then((image: NativeImage) => {
@@ -299,7 +309,9 @@ function handleGetVersion() {
 
 async function handleSetKiosk(event: IpcMainInvokeEvent, isEnabled: boolean) {
   const currentSettingsValue = (await Settings.get()).isKiosk
-  console.log(`Setting kiosk to ${isEnabled}. Settings state: ${currentSettingsValue}. App state: ${mainWindow.isKiosk()}`)
+  console.log(
+    `Setting kiosk to ${isEnabled}. Settings state: ${currentSettingsValue}. App state: ${mainWindow.isKiosk()}`
+  )
   await Settings.set({ isKiosk: isEnabled })
   // avoid setting it to the same value because it breaks fullscreen mode
   // PlayerJS sets it to false on startup if player was unpaired before
