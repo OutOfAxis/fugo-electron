@@ -1,6 +1,6 @@
 {
   "name": "fugo-player",
-  "version": "1.17.0",
+  "version": "1.18.0",
   "description": "Fugo Player",
   "main": "build/main.js",
   "scripts": {
