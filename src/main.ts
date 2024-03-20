@@ -289,7 +289,7 @@ function reloadWebPlayer(appGuarded: typeof app) {
   appGuarded.exit(0)
 }
 
-function handleDoScreenshot(event: any, url: string) {
+function handleDoScreenshot(event: any, url: string, headers: string) {
   const window =
     displayingFullscreenWebsiteId &&
     displayWebsites[displayingFullscreenWebsiteId]
@@ -299,8 +299,19 @@ function handleDoScreenshot(event: any, url: string) {
     fetch(url, {
       method: 'PUT',
       body: image.toJPEG(75),
+      headers: parseJsonSafe(headers),
     })
   })
+}
+
+function parseJsonSafe(str: string) {
+  let headers = {}
+  try {
+    headers = JSON.parse(str)
+  } catch (e) {
+    console.error('JSON parsing error', e)
+  }
+  return headers
 }
 
 function handleGetVersion() {

@@ -10,8 +10,8 @@ let fugoElectronBridgeInstance: FugoElectronBridge = {
     ipcRenderer.invoke('setKiosk', isEnabled)
   },
 
-  doScreenshot(url) {
-    ipcRenderer.send('doScreenshot', url)
+  doScreenshot(url, headers = '{}') {
+    ipcRenderer.send('doScreenshot', url, headers)
   },
 
   getVersion() {
@@ -84,7 +84,7 @@ console.log(
 
 type FugoElectronBridge = {
   getVersion: () => string
-  doScreenshot(url: string): void
+  doScreenshot(url: string, headers?: string): void
 } & DisplayWebsite
 
 interface DisplayWebsite {
