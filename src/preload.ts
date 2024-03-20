@@ -85,6 +85,9 @@ console.log(
 type FugoElectronBridge = {
   getVersion: () => string
   doScreenshot(url: string, headers?: string): void
+  setKiosk(isEnabled: boolean): void
+  getSystemMemoryInfo(): { total: number; free: number }
+  getPlatform(): NodeJS.Platform
 } & DisplayWebsite
 
 interface DisplayWebsite {
@@ -103,7 +106,4 @@ interface DisplayWebsite {
   displayWebsite: (id: string) => void
   destroyWebsiteFullscreen: () => void
   destroyWebsite: (id: string) => void
-  setKiosk(isEnabled: boolean): void
-  getSystemMemoryInfo(): { total: number; free: number }
-  getPlatform(): NodeJS.Platform
 }
