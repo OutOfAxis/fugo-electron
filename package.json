@@ -62,8 +62,9 @@
       "publisherDisplayName": "outofaxis limited"
     },
     "win": {
-      "publisherName": "outofaxis limited",
-      "certificateSubjectName": "outofaxis limited",
+      "verifyUpdateCodeSignature": false,
+      "publisherName": "FUGO LTD",
+      "certificateSubjectName": "FUGO LTD",
       "target": [
         {
           "target": "nsis",
