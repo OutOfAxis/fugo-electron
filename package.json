@@ -87,7 +87,15 @@
     "electron-log": "^4.4.8",
     "electron-notarize": "^1.2.2",
     "electron-updater": "^5.3.0",
+    "fastq": "^1.17.1",
     "node-fetch": "2.6.9",
+    "promise.any": "^2.0.6",
+    "promised-sqlite3": "^2.1.0",
+    "puppeteer": "^22.9.0",
+    "puppeteer-extra": "^3.3.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.2",
+    "sharp": "^0.33.4",
+    "totp-generator": "^1.0.0",
     "typescript": "^5.0.4"
   }
 }

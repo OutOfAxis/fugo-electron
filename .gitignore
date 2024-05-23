@@ -3,3 +3,6 @@ dist
 build
 .env
 .DS_Store
+screenshots
+tmp
+db.sqlite

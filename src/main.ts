@@ -6,6 +6,7 @@ import {
   screen,
 } from 'electron'
 import { Settings } from './settings'
+import { handleGetPlayerDashboardScreenshot } from './screenshot-worker-starter'
 
 const { mouse, Point } = require('@nut-tree/nut-js')
 const { app, BrowserWindow, Tray, Menu, ipcMain } = require('electron')
@@ -110,6 +111,10 @@ async function createWindow() {
   ipcMain.handle('prepareWebsiteFullscreen', handlePrepareWebsiteFullscreen)
   ipcMain.handle('displayWebsiteFullscreen', handleDisplayWebsiteFullscreen)
   ipcMain.handle('destroyWebsiteFullscreen', handleDestroyWebsiteFullscreen)
+  ipcMain.handle(
+    'getPlayerDashboardScreenshot',
+    handleGetPlayerDashboardScreenshot
+  )
 
   autoUpdater.checkForUpdatesAndNotify()
   setInterval(() => {

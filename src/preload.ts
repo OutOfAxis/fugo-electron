@@ -1,4 +1,5 @@
-const { contextBridge, ipcRenderer } = require('electron')
+import { Event } from './code-generator/base-generator'
+import { contextBridge, ipcRenderer } from 'electron'
 let version: string = ''
 
 ipcRenderer.invoke('getVersion').then((v) => (version = v))
@@ -70,6 +71,14 @@ let fugoElectronBridgeInstance: FugoElectronBridge = {
   getPlatform() {
     return process.platform
   },
+
+  async getPlayerDashboardScreenshot(dashboardId, dashboard) {
+    return await ipcRenderer.invoke(
+      'getPlayerDashboardScreenshot',
+      dashboardId,
+      dashboard
+    )
+  },
 }
 
 contextBridge.exposeInMainWorld(
@@ -88,6 +97,10 @@ type FugoElectronBridge = {
   setKiosk(isEnabled: boolean): void
   getSystemMemoryInfo(): { total: number; free: number }
   getPlatform(): NodeJS.Platform
+  getPlayerDashboardScreenshot?(
+    dashboardId: string,
+    dashboard: DashboardReply
+  ): Promise<string>
 } & DisplayWebsite
 
 interface DisplayWebsite {
@@ -106,4 +119,28 @@ interface DisplayWebsite {
   displayWebsite: (id: string) => void
   destroyWebsiteFullscreen: () => void
   destroyWebsite: (id: string) => void
+}
+
+export interface DashboardReply {
+  dashboard: {
+    height: number
+    width: number
+    steps: Array<Event>
+    secretIds: Array<string>
+    screenshotPeriod: number
+    settings: any
+    maybeOnPremiseConfig: {
+      localIp: string
+      remoteIp: string
+      publicKey: string
+      screenshotUrl: string
+      thumbnailUrl: string
+    }
+  }
+  secrets: {
+    secrets: Array<{
+      key: string
+      value: string
+    }>
+  }
 }
